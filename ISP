@@ -1,0 +1,27 @@
+public interface IWork
+{
+    void Work();
+}
+
+public interface IEat
+{
+    void Eat();
+}
+
+public interface ISleep
+{
+    void Sleep();
+}
+
+public class HumanWorker : IWork, IEat, ISleep
+{
+    public void Work()  { /* ... */ }
+    public void Eat()   { /* ... */ }
+    public void Sleep() { /* ... */ }
+}
+
+public class RobotWorker : IWork
+{
+    public void Work() { /* ... */ }
+    // Не реализует Eat/Sleep — и это нормально
+}
