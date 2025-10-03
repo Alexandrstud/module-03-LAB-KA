@@ -1,0 +1,74 @@
+using System;
+using System.Collections.Generic;
+
+public enum CustomerType
+{
+    Regular,
+    Silver,
+    Gold,
+    Platinum
+}
+
+public interface IDiscountStrategy
+{
+    CustomerType SupportedType { get; }
+    decimal Apply(decimal amount);
+}
+
+public class RegularDiscount : IDiscountStrategy
+{
+    public CustomerType SupportedType => CustomerType.Regular;
+    public decimal Apply(decimal amount) => amount;
+}
+
+public class SilverDiscount : IDiscountStrategy
+{
+    public CustomerType SupportedType => CustomerType.Silver;
+    public decimal Apply(decimal amount) => amount * 0.90m; 
+}
+
+public class GoldDiscount : IDiscountStrategy
+{
+    public CustomerType SupportedType => CustomerType.Gold;
+    public decimal Apply(decimal amount) => amount * 0.80m;
+}
+
+// Новая стратегия добавляется отдельно
+public class PlatinumDiscount : IDiscountStrategy
+{
+    public CustomerType SupportedType => CustomerType.Platinum;
+    public decimal Apply(decimal amount) => amount * 0.70m;
+}
+
+public class DiscountCalculator
+{
+    private readonly Dictionary<CustomerType, IDiscountStrategy> _strategies;
+
+    public DiscountCalculator(IEnumerable<IDiscountStrategy> strategies)
+    {
+        _strategies = new Dictionary<CustomerType, IDiscountStrategy>();
+        foreach (var s in strategies)
+            _strategies[s.SupportedType] = s;
+    }
+
+    public decimal Calculate(CustomerType customerType, decimal amount)
+    {
+        if (!_strategies.TryGetValue(customerType, out var strategy))
+            throw new ArgumentException($"No discount strategy for {customerType}");
+
+        return strategy.Apply(amount);
+    }
+}
+
+// Пример регистрации и использования
+/*
+var calculator = new DiscountCalculator(new IDiscountStrategy[]
+{
+    new RegularDiscount(),
+    new SilverDiscount(),
+    new GoldDiscount(),
+    new PlatinumDiscount() // добавили — и всё работает без правок калькулятора
+});
+
+var result = calculator.Calculate(CustomerType.Platinum, 1000m); // 700
+*/
