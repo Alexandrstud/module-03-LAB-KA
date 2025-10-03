@@ -1,0 +1,63 @@
+using System;
+using System.Collections.Generic;
+
+public class Item
+{
+    public string Name { get; }
+    public decimal Price { get; }
+
+    public Item(string name, decimal price)
+    {
+        Name = name;
+        Price = price;
+    }
+}
+
+public class Invoice
+{
+    public int Id { get; set; }
+    public List<Item> Items { get; } = new();
+    public decimal TaxRate { get; set; } 
+}
+
+public class InvoiceCalculator
+{
+    public decimal CalculateTotal(Invoice invoice)
+    {
+        if (invoice is null) throw new ArgumentNullException(nameof(invoice));
+
+        decimal subTotal = 0m;
+        foreach (var item in invoice.Items)
+            subTotal += item.Price;
+
+        return subTotal + subTotal * invoice.TaxRate;
+    }
+}
+
+public interface IInvoiceRepository
+{
+    void Save(Invoice invoice, decimal total);
+}
+
+public class InvoiceRepository : IInvoiceRepository
+{
+    public void Save(Invoice invoice, decimal total)
+    {
+        // Здесь — только логика сохранения (БД/файл/HTTP и т.п.)
+        // Примерно: INSERT INTO Invoices(Id, Total, TaxRate, ...)
+        Console.WriteLine($"[DB] Saved invoice #{invoice.Id} with total {total}");
+    }
+}
+
+// Пример использования
+/*
+var invoice = new Invoice { Id = 1, TaxRate = 0.12m };
+invoice.Items.Add(new Item("Keyboard", 100m));
+invoice.Items.Add(new Item("Mouse", 50m));
+
+var calculator = new InvoiceCalculator();
+var total = calculator.CalculateTotal(invoice);
+
+var repo = new InvoiceRepository();
+repo.Save(invoice, total);
+*/
