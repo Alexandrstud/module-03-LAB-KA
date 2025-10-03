@@ -1,0 +1,54 @@
+using System;
+
+public interface INotificationChannel
+{
+    void Send(string message);
+}
+
+public class EmailService : INotificationChannel
+{
+    public void Send(string message)
+    {
+        Console.WriteLine($"[Email] {message}");
+    }
+}
+
+public class SmsService : INotificationChannel
+{
+    public void Send(string message)
+    {
+        Console.WriteLine($"[SMS] {message}");
+    }
+}
+
+public class PushService : INotificationChannel
+{
+    public void Send(string message)
+    {
+        Console.WriteLine($"[Push] {message}");
+    }
+}
+
+public class Notification
+{
+    private readonly INotificationChannel _channel;
+
+    public Notification(INotificationChannel channel)
+    {
+        _channel = channel;
+    }
+
+    public void Send(string message)
+    {
+        _channel.Send(message);
+    }
+}
+
+// Пример использования
+/*
+var emailNotif = new Notification(new EmailService());
+emailNotif.Send("Ваш заказ отправлен.");
+
+var smsNotif = new Notification(new SmsService());
+smsNotif.Send("Код: 1234");
+*/
